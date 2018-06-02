@@ -24,14 +24,15 @@ curl -s -X POST -H "Content-Type: application/json" -d "{
     \"api_key\": \"$API_KEY\"
 }" $SERVER_URL/api/v1/agent/ > /tmp/agent.json
 
-IP_SERVER=$(python3 -c 'import json;obj=json.load(file("/tmp/agent.json"));print (obj["ip_server"])')
-IP_AGENT=$(python3 -c 'import json;obj=json.load(file("/tmp/agent.json"));print (obj["ip_agent"])')
-IDENTIFIER=$(python3 -c 'import json;obj=json.load(file("/tmp/agent.json"));print (obj["identifier"])')
+IP_SERVER=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["ip_server"])')
+IP_AGENT=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["ip_agent"])')
+IDENTIFIER=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["identifier"])')
 
 install_docker(){
     echo ">>>> Docker Engine Installation >>>>"
     
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
     sudo apt-get update
     sudo apt-get install -y docker-ce
     
@@ -108,7 +109,7 @@ add_sudoers(){
     done
 }
 
-compose(){
+composer(){
     sudo -u fipro bash -c docker-compose -d -f $DOCKER_DIR/docker-compose.yml up
 
     sleep 3
