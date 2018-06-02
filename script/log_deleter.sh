@@ -13,6 +13,8 @@ dionaea_deleter(){
     truncate -s 0 /var/fipro/data/dionaea/dionaea-errors.log
     truncate -s 0 /var/fipro/data/dionaea/dionaea.json
     rm -rf /var/fipro/data/dionaea/binaries/*
+    rm -rf /var/fipro/data/dionaea/bistreams/*
+
 }
 
 

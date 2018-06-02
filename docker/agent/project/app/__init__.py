@@ -10,7 +10,7 @@ def create_app(config_name):
 
     config[config_name].init_app(app)
     
-    from app.api import api_v1
+    from app.controller.api import api_v1
     app.register_blueprint(api_v1)
 
     return app

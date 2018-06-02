@@ -3,17 +3,18 @@ import docker
 import time
 from flask import jsonify, request
 from flask_restplus import Namespace, Resource, fields
-from app.api.sensor import config
+from app.controller.api import api
+from . import config
 
-api = Namespace('sensor', description='Sensor related operations')
+ns = api.namespace('sensor', description='Sensor related operations')
 client = docker.DockerClient(base_url='unix://var/run/docker.sock')
 
 
-@api.route('/')
+@ns.route('/')
 class HoneypotCollection(Resource):
     def get(self):
         try:
-            containers = client.containers.list()
+            containers = client.containers.list(all=True)
             response = {
                 'status': True,
                 'sensors': [
@@ -21,9 +22,10 @@ class HoneypotCollection(Resource):
                         'sensor_id': container.id,
                         'sensor_name': container.name,
                         'sensor_status': container.status,
-                        'timestamps': time.time()
+                        'sensor_state': container.attrs['State']
                     } for container in containers
-                ]
+                ],
+                'timestamps': time.time()
             }
             return jsonify(response)
         except docker.errors.APIError:
@@ -58,17 +60,19 @@ class HoneypotCollection(Resource):
             response = {'status': False,'message': "There is a problem in sensor server !"}
             return jsonify(response), 500
 
-@api.route('/<string:sensor_id>')
+@ns.route('/<string:sensor_id>/')
 class HoneypotItem(Resource):
     def get(self, sensor_id):
         try:
             container= client.containers.get(sensor_id)
+
             response = {
                 'status': True,
                 'sensor': {
-                    'sensor_id': container.id, 
-                    'sensor_name': container.name, 
-                    'sensor_status': container.status
+                    'id': container.id, 
+                    'name': container.name, 
+                    'status': container.status,
+                    'state': container.attrs['State']
                 },
                 'timestamps': time.time()
             }
@@ -87,11 +91,17 @@ class HoneypotItem(Resource):
             container = client.containers.get(sensor_id)
             container.rename(name=sensor_name)
 
+            message = "Sensor {0} has been renamed with {1}.".format(container.name, sensor_name)
+            container = client.containers.get(sensor_id)
             response = {
                 'status': True,
-                'sensor_id': container.id,
-                'sensor_name': sensor_name,
-                'message': "Sensor "+ container.name +" has been renamed with "+sensor_name,
+                'sensor': {
+                    'id': container.id, 
+                    'name': container.name, 
+                    'status': container.status,
+                    'state': container.attrs['State']
+                },
+                'message': message,
                 'timestamps': time.time()
             }
 
@@ -107,11 +117,16 @@ class HoneypotItem(Resource):
             container = client.containers.get(sensor_id)
             container.remove(force=True)
 
+            message = "Sensor {} has been removed".format(container.name)
             response = {
                 'status': True,
-                'sensor_id': container.id,
-                'sensor_name': container.name,
-                'message': "Sensor "+ container.name +" has been removed",
+                'sensor': {
+                    'id': container.id, 
+                    'name': container.name, 
+                    'status': container.status,
+                    'state': container.attrs['State']
+                },
+                'message': message,
                 'timestamps': time.time()
             }
 
@@ -120,3 +135,47 @@ class HoneypotItem(Resource):
         except docker.errors.APIError:
             response = {'status': False,'message': "There is a problem in sensor server !"}
             return jsonify(response), 500
+
+
+@ns.route('/<string:sensor_id>/<string:operator>/')
+class HoneypotOperation(Resource):
+
+    def get(self, sensor_id, operator):
+        try:
+            container= client.containers.get(sensor_id)
+            if operator == 'start':
+                container.start()
+                message = "Sensor {} have been started".format(container.name)
+            elif operator == 'stop':
+                container.stop()
+                message = "Sensor {} have been stopped".format(container.name)
+            elif operator == 'restart':
+                container.restart()
+                message = "Sensor {} have been restarted".format(container.name)
+
+            else:
+                return dict(
+                        status=False,
+                        message="Operation unknown. Operation: Start | Stop | Restart"
+                    )
+
+            container = client.containers.get(sensor_id)
+            response = {
+                'status': True,
+                'sensor': {
+                    'id': container.id, 
+                    'name': container.name, 
+                    'status': container.status,
+                    'state': container.attrs['State']
+                },
+                "message": message,
+                'timestamps': time.time()
+            }
+
+            return jsonify(response)
+            
+        except docker.errors.NotFound:
+            response = {"status":False,"message":"Container not Found"}
+            return jsonify(response), 404
+    
+
