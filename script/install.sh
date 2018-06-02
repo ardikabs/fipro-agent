@@ -26,10 +26,16 @@ curl -s -X POST -H "Content-Type: application/json" -d "{
     \"api_key\": \"$API_KEY\"
 }" $SERVER_URL/api/v1/agent/ > /tmp/agent.json
 
+STATUS=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["status"])')
+if [[ "$STATUS" == "expired" ]]; then
+    echo -e "\n\n>>> Deploy Key are expired. Please Renew Again. <<<"
+    echo -e "##### Installer Stopped #####"
+    exit 1
+fi
+
 IP_SERVER=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["ip_server"])')
 IP_AGENT=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["ip_agent"])')
 IDENTIFIER=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["identifier"])')
-STATUS=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["status"])')
 
 install_docker(){
     echo ">>>> Docker Engine Installation >>>>"
@@ -132,8 +138,4 @@ main(){
     composer
 }
 
-if [[ "$STATUS" != "expired" ]]; then
-    main
-else
-    exit 1
-fi
+main
