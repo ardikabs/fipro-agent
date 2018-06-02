@@ -10,14 +10,15 @@ if [[ $# -ne 3 ]]; then
 	exit 1
 fi
 
-CURRENT_DIR=`dirname "$(readlink -f "$0")"`
+AGENT_DIR=`dirname "$(readlink -f "$0")"`
+BASE_DIR=`dirname "$(readlink -f $AGENT_DIR)"`
 SERVER_URL=$1
 API_KEY=$2
 DEPLOY_KEY=$3
 
-export SCRIPT_DIR=$PWD/script
-export DOCKER_DIR=$PWD/docker
-export DATA_DIR=$PWD/data
+export SCRIPT_DIR=$AGENT_DIR/script
+export DOCKER_DIR=$AGENT_DIR/docker
+export DATA_DIR=$BASE_DIR/data
 
 curl -s -X POST -H "Content-Type: application/json" -d "{
 	\"deploy_key\": \"$DEPLOY_KEY\",
@@ -68,7 +69,7 @@ setup_dir(){
     mkdir -p $DATA_DIR/cowrie/downloads
     mkdir -p $DATA_DIR/cowrie/keys
 
-    chown -R 3500:3500 $PWD
+    chown -R 3500:3500 $BASE_DIR
 
     sleep 3
 }
@@ -84,7 +85,7 @@ setup_ssh(){
 
 setup_cronjob(){
     # Inserting Cronjob for Deleting Schedule
-    sudo crontab -u fipro -l | { cat; echo "0 0 * * * bash /var/fipro/agent/script/log_deleter.sh"; } | crontab -
+    sudo crontab -u fipro -l | { cat; echo "0 0 * * * bash /var/fipro/agent/script/log_deleter.sh"; } | crontab -u fipro -
 }
 
 setup_fluentbit(){
@@ -96,7 +97,7 @@ setup_fluentbit(){
 
 create_user(){
     sudo addgroup --gid 3500 fipro
-    sudo adduser --system --no-create-home --shell /bin/bash --uid 3500 --disabled-password \
+    sudo adduser --system --shell /bin/bash --uid 3500 --disabled-password \
         --disabled-login --gid 3500 fipro
     
     add_sudoers fipro
@@ -110,7 +111,7 @@ add_sudoers(){
 }
 
 composer(){
-    sudo -u fipro bash -c docker-compose -f $DOCKER_DIR/docker-compose.yml up -d
+    sudo -u fipro docker-compose -f $DOCKER_DIR/docker-compose.yml up -d
 
     sleep 3
 

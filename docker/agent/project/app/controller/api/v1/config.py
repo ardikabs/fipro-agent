@@ -25,17 +25,17 @@ dionaea_ports={
     '27017/tcp': 27017
 }
 dionaea_volumes={
-    '/data/dionaea': {'bind': '/opt/dionaea/var/dionaea', 'mode': 'rw'}
+    '/var/fipro/agent/data/dionaea': {'bind': '/opt/dionaea/var/dionaea', 'mode': 'rw'}
 }
 cowrie_volumes={
-    '/data/cowrie/keys': {'bind': '/home/cowrie/cowrie/etc', 'mode': 'rw'},
-    '/data/cowrie/downloads': {'bind': '/home/cowrie/cowrie/dl', 'mode': 'rw'},
-    '/data/cowrie/log': {'bind': '/home/cowrie/cowrie/log', 'mode': 'rw'},
-    '/data/cowrie/log/tty': {'bind': '/home/cowrie/cowrie/log/tty', 'mode': 'rw'}
+    '/var/fipro/agent/data/cowrie/keys': {'bind': '/home/cowrie/cowrie/etc', 'mode': 'rw'},
+    '/var/fipro/agent/data/cowrie/downloads': {'bind': '/home/cowrie/cowrie/dl', 'mode': 'rw'},
+    '/var/fipro/agent/data/cowrie/log': {'bind': '/home/cowrie/cowrie/log', 'mode': 'rw'},
+    '/var/fipro/agent/data/cowrie/log/tty': {'bind': '/home/cowrie/cowrie/log/tty', 'mode': 'rw'}
 }
 glastopf_volumes={
-    '/data/glastopf/db': {'bind': '/opt/glastopf/db', 'mode': 'rw'},
-    '/data/glastopf/log': {'bind': '/opt/glastopf/log', 'mode': 'rw'}
+    '/var/fipro/agent/data/glastopf/db': {'bind': '/opt/glastopf/db', 'mode': 'rw'},
+    '/var/fipro/agent/data/glastopf/log': {'bind': '/opt/glastopf/log', 'mode': 'rw'}
 }
 
 container_attributes={

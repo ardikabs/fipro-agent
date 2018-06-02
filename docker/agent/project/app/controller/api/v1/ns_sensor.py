@@ -1,7 +1,7 @@
 
 import docker
 import time
-from flask import jsonify, request
+from flask import jsonify, request, make_response
 from flask_restplus import Namespace, Resource, fields
 from app.controller.api import api
 from . import config
@@ -27,10 +27,10 @@ class HoneypotCollection(Resource):
                 ],
                 'timestamps': time.time()
             }
-            return jsonify(response)
+            return make_response(jsonify(response), 200)
         except docker.errors.APIError:
             response = {'status': False,'message': "There is a problem in sensor server !"}
-            return jsonify(response), 500
+            return make_response(jsonify(response), 500)
 
     def post(self):
         data = request.json
@@ -54,11 +54,11 @@ class HoneypotCollection(Resource):
                 'timestamps': time.time()
             }
 
-            return jsonify(response)
+            return make_response(jsonify(response), 200)
         
         except docker.errors.APIError:
             response = {'status': False,'message': "There is a problem in sensor server !"}
-            return jsonify(response), 500
+            return make_response(jsonify(response), 500)
 
 @ns.route('/<string:sensor_id>/')
 class HoneypotItem(Resource):
@@ -77,11 +77,11 @@ class HoneypotItem(Resource):
                 'timestamps': time.time()
             }
 
-            return jsonify(response)
+            return make_response(jsonify(response), 200)
             
         except docker.errors.NotFound:
             response = {"status":False,"message":"Container not Found"}
-            return jsonify(response), 404
+            return make_response(jsonify(response), 404)
     
     def put(self, sensor_id):
         data = request.json
@@ -105,11 +105,11 @@ class HoneypotItem(Resource):
                 'timestamps': time.time()
             }
 
-            return jsonify(response)
+            return make_response(jsonify(response), 200)
         
         except docker.errors.APIError:
             response = {'status': False,'message': "There is a problem in sensor server !"}
-            return jsonify(response), 500
+            return make_response(jsonify(response), 500)
 
 
     def delete(self, sensor_id):
@@ -130,11 +130,11 @@ class HoneypotItem(Resource):
                 'timestamps': time.time()
             }
 
-            return jsonify(response)
+            return make_response(jsonify(response), 200)
         
         except docker.errors.APIError:
             response = {'status': False,'message': "There is a problem in sensor server !"}
-            return jsonify(response), 500
+            return make_response(jsonify(response), 500)
 
 
 @ns.route('/<string:sensor_id>/<string:operator>/')
@@ -172,10 +172,10 @@ class HoneypotOperation(Resource):
                 'timestamps': time.time()
             }
 
-            return jsonify(response)
+            return make_response(jsonify(response), 200)
             
         except docker.errors.NotFound:
             response = {"status":False,"message":"Container not Found"}
-            return jsonify(response), 404
+            return make_response(jsonify(response), 404)
     
 

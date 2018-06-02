@@ -9,8 +9,10 @@ services:
     container_name: fipro-agent
     restart: always
     ports:
-     - "80:5000"
+     - "8080:5000"
     image: "ardikabs/fipro-agent:1.0"
+    volumes:
+      - /var/run/:/var/run/
   
   fluentbit-service:
     container_name: fluentbit
