@@ -10,15 +10,15 @@ if [[ $# -ne 3 ]]; then
 	exit 1
 fi
 
-AGENT_DIR=`dirname "$(readlink -f "$0")"`
-BASE_DIR=`dirname "$(readlink -f $AGENT_DIR)"`
+export SCRIPT_DIR=`dirname "$(readlink -f "$0")"`
+export AGENT_DIR=`dirname "$(readlink -f $SCRIPT_DIR)"`
+export BASE_DIR=`dirname "$(readlink -f $AGENT_DIR)"`
+export DOCKER_DIR=$AGENT_DIR/docker
+export DATA_DIR=$BASE_DIR/data
+
 SERVER_URL=$1
 API_KEY=$2
 DEPLOY_KEY=$3
-
-export SCRIPT_DIR=$AGENT_DIR/script
-export DOCKER_DIR=$AGENT_DIR/docker
-export DATA_DIR=$BASE_DIR/data
 
 curl -s -X POST -H "Content-Type: application/json" -d "{
 	\"deploy_key\": \"$DEPLOY_KEY\",
