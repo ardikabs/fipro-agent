@@ -31,6 +31,7 @@ if [[ "$STATUS" == "expired" ]]; then
     clear
     echo -e "\n\n>>> Deploy Key are expired. Please Renew Again. <<<"
     echo -e "##### Installer Stopped #####\n\n\n"
+    sudo rm -rf /var/fipro/
     exit 1
 fi
 
