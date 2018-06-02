@@ -110,11 +110,11 @@ add_sudoers(){
 }
 
 composer(){
-    sudo -u fipro bash -c docker-compose -d -f $DOCKER_DIR/docker-compose.yml up
+    sudo -u fipro bash -c docker-compose -f $DOCKER_DIR/docker-compose.yml up -d
 
     sleep 3
 
-    clear
+    # clear
     echo ">>> Agent Installation Done <<<"
 }
 
