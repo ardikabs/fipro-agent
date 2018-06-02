@@ -27,7 +27,7 @@ curl -s -X POST -H "Content-Type: application/json" -d "{
 }" $SERVER_URL/api/v1/agent/ > /tmp/agent.json
 
 STATUS=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["status"])')
-if [[ "$STATUS" != true ]]; then
+if [[ "$STATUS" != True ]]; then
     clear
     echo -e "\n\n>>> Deploy Key are expired. Please Renew Again. <<<"
     echo -e "##### Installer Stopped #####\n\n\n"
