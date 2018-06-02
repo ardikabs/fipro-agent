@@ -1,0 +1,24 @@
+version: '3'
+
+
+services:
+
+# Glastopf service
+  agent-service:
+    build: ./agent
+    container_name: fipro-agent
+    restart: always
+    ports:
+     - "80:5000"
+    image: "ardikabs/fipro-agent:1.0"
+  
+  fluentbit-service:
+    container_name: fluentbit
+    restart: always
+    image: "fluent/fluent-bit:0.12"
+    volumes:
+      - /var/fipro/agent/docker/fluentbit/conf:/fluent-bit/etc
+      - /var/fipro/data/dionaea/:/data/dionaea
+      - /var/fipro/data/cowrie/log:/data/cowrie/log
+      - /var/fipro/data/glastopf/log:/data/glastopf/log
+  

@@ -10,4 +10,4 @@ RUN pip install -r requirements.txt
 
 EXPOSE 5000/tcp
 ENTRYPOINT ["/bin/bash"]
-CMD ["python", "manage.py","runserver"]
+CMD ["python", "manager.py","runserver"]
