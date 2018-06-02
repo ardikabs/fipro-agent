@@ -29,6 +29,7 @@ curl -s -X POST -H "Content-Type: application/json" -d "{
 IP_SERVER=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["ip_server"])')
 IP_AGENT=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["ip_agent"])')
 IDENTIFIER=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["identifier"])')
+STATUS=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["status"])')
 
 install_docker(){
     echo ">>>> Docker Engine Installation >>>>"
@@ -131,4 +132,8 @@ main(){
     composer
 }
 
-main
+if [[ "$STATUS" != "expired" ]]; then
+    main
+else
+    exit 1
+fi
