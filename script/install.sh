@@ -102,7 +102,7 @@ setup_fluentbit(){
     # Set Fluentbit Configuration
     sed -i 's/@SET ip_fluentd=<ip_fluentd>/@SET ip_fluentd='$IP_SERVER'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
     sed -i 's/@SET ip_host=<ip_host>/@SET ip_host='$IP_AGENT'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
-    sed -i 's/@SET identifier=<uid>/@SET identifier='$IDENTIFIER'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
+    sed -i 's/@SET identifier=<identifier>/@SET identifier='$IDENTIFIER'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
 }
 
 create_user(){
