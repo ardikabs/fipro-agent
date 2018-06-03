@@ -15,16 +15,21 @@ class HoneypotCollection(Resource):
     def get(self):
         try:
             containers = client.containers.list(all=True)
+            resp_container=[]
+            for container in containers:
+                network_settings, = container.attrs['NetworkSettings']['Networks'].values()
+                data = {
+                    'id': container.id,
+                    'name': container.name,
+                    'status': container.status,
+                    'state': container.attrs['State'],
+                    'ipaddr': network_settings['IPAddress']
+                }
+                resp_container.append(data)
+
             response = {
                 'status': True,
-                'sensors': [
-                    {
-                        'sensor_id': container.id,
-                        'sensor_name': container.name,
-                        'sensor_status': container.status,
-                        'sensor_state': container.attrs['State']
-                    } for container in containers
-                ],
+                'sensors': resp_container,
                 'timestamps': time.time()
             }
             return make_response(jsonify(response), 200)
@@ -45,11 +50,13 @@ class HoneypotCollection(Resource):
                                             ports= config.container_attributes[sensor_type]['ports'],
                                             volumes= config.container_attributes[sensor_type]['volumes'],
                                             detach=True)
+            network_settings, = container.attrs['NetworkSettings']['Networks'].values()
 
             response = {
                 'status': True,
-                'sensor_name': sensor_name,
-                'sensor_id': container.id,
+                'id': container.id,
+                'name': sensor_name,
+                'ipaddr': network_settings['IPAddress'],
                 'message': "Sensor "+ sensor_name +" successfully has been added",
                 'timestamps': time.time()
             }
@@ -65,6 +72,7 @@ class HoneypotItem(Resource):
     def get(self, sensor_id):
         try:
             container= client.containers.get(sensor_id)
+            network_settings, = container.attrs['NetworkSettings']['Networks'].values()
 
             response = {
                 'status': True,
@@ -72,7 +80,8 @@ class HoneypotItem(Resource):
                     'id': container.id, 
                     'name': container.name, 
                     'status': container.status,
-                    'state': container.attrs['State']
+                    'state': container.attrs['State'],
+                    'ipaddr': network_settings['IPAddress']
                 },
                 'timestamps': time.time()
             }
@@ -93,13 +102,15 @@ class HoneypotItem(Resource):
 
             message = "Sensor {0} has been renamed with {1}.".format(container.name, sensor_name)
             container = client.containers.get(sensor_id)
+            network_settings, = container.attrs['NetworkSettings']['Networks'].values()
             response = {
                 'status': True,
                 'sensor': {
                     'id': container.id, 
                     'name': container.name, 
                     'status': container.status,
-                    'state': container.attrs['State']
+                    'state': container.attrs['State'],
+                    'ipaddr': network_settings['IPAddress']
                 },
                 'message': message,
                 'timestamps': time.time()
@@ -115,16 +126,19 @@ class HoneypotItem(Resource):
     def delete(self, sensor_id):
         try:
             container = client.containers.get(sensor_id)
+            network_settings, = container.attrs['NetworkSettings']['Networks'].values()
             container.remove(force=True)
 
             message = "Sensor {} has been removed".format(container.name)
+            
             response = {
                 'status': True,
                 'sensor': {
                     'id': container.id, 
                     'name': container.name, 
                     'status': container.status,
-                    'state': container.attrs['State']
+                    'state': container.attrs['State'],
+                    'ipaddr': network_settings['IPAddress']
                 },
                 'message': message,
                 'timestamps': time.time()
@@ -160,13 +174,17 @@ class HoneypotOperation(Resource):
                     )
 
             container = client.containers.get(sensor_id)
+            network_settings, = container.attrs['NetworkSettings']['Networks'].values()
+
             response = {
                 'status': True,
                 'sensor': {
                     'id': container.id, 
                     'name': container.name, 
                     'status': container.status,
-                    'state': container.attrs['State']
+                    'state': container.attrs['State'],
+                    'ipaddr': network_settings['IPAddress']
+
                 },
                 "message": message,
                 'timestamps': time.time()

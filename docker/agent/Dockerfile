@@ -9,5 +9,4 @@ WORKDIR /project
 RUN pip install -r requirements.txt
 
 EXPOSE 5000/tcp
-ENTRYPOINT ["/bin/bash"]
 CMD ["python", "manager.py","runserver"]

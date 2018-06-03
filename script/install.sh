@@ -40,7 +40,7 @@ IP_AGENT=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.s
 IDENTIFIER=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["identifier"])')
 
 install_docker(){
-    echo ">>>> Docker Engine Installation >>>>"
+    echo -e "\n\n>>>> Docker Engine Installation >>>>"
     
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
@@ -59,7 +59,7 @@ install_docker(){
 }
 
 setup_dir(){
-    echo ">>>> Initialize Directory for Sensor Purpose >>>>"
+    echo -e "\n\n>>>> Initialize Directory for Sensor Purpose >>>>"
 
     mkdir -p $DATA_DIR/dionaea/log
     mkdir -p $DATA_DIR/dionaea/rtp
@@ -85,7 +85,7 @@ setup_dir(){
 }
 
 setup_ssh(){
-    echo ">>>> Change SSH Port 22 to 2222 >>>>"
+    echo -e "\n\n>>>> Change SSH Port 22 to 2222 >>>>"
     sudo apt-get install openssh-server
     sed -i 's/Port 22/Port 2222/g' /etc/ssh/sshd_config
     sudo /etc/init.d/ssh restart
@@ -124,9 +124,8 @@ composer(){
     sudo -u fipro docker-compose -f $DOCKER_DIR/docker-compose.yml up -d
 
     sleep 3
-
-    # clear
-    echo ">>> Agent Installation Done <<<"
+    clear
+    echo "\n\n>>> Agent Installation Done <<<"
 }
 
 
