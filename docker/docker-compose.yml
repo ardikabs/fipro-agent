@@ -3,7 +3,6 @@ version: '3'
 
 services:
 
-# Glastopf service
   agent-service:
     build: ./agent
     container_name: fipro-agent
