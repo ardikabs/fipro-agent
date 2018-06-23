@@ -35,8 +35,8 @@ if [[ "$STATUS" != True ]]; then
     exit 1
 fi
 
-IP_SERVER=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["ip_server"])')
-IP_AGENT=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["ip_agent"])')
+SERVER_IP=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["server_ip"])')
+AGENT_IP=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["agent_ip"])')
 IDENTIFIER=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["identifier"])')
 
 install_docker(){
@@ -100,8 +100,8 @@ setup_cronjob(){
 
 setup_fluentbit(){
     # Set Fluentbit Configuration
-    sed -i 's/@SET ip_fluentd=<ip_fluentd>/@SET ip_fluentd='$IP_SERVER'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
-    sed -i 's/@SET ip_host=<ip_host>/@SET ip_host='$IP_AGENT'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
+    sed -i 's/@SET fleutnd_ip=<fleutnd_ip>/@SET fleutnd_ip='$SERVER_IP'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
+    sed -i 's/@SET agent_ip=<agent_ip>/@SET agent_ip='$AGENT_IP'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
     sed -i 's/@SET identifier=<identifier>/@SET identifier='$IDENTIFIER'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
 }
 
