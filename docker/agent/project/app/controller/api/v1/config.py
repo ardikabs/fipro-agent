@@ -24,6 +24,20 @@ dionaea_ports={
     '5061/tcp': 5061,
     '27017/tcp': 27017
 }
+# dionaea_ports={
+#     '20/tcp': 20,
+#     '21/tcp': 21,
+#     '42/tcp': 42,
+#     '69/udp': 69,
+#     '135/tcp': 135,
+#     '443/tcp': 443,
+#     '445/tcp': 445,
+#     '1433/tcp': 1433,
+#     '1723/tcp': 1723,
+#     '3306/tcp': 3306,
+#     '5060/udp': 5060,
+#     '5061/tcp': 5061,
+# }
 dionaea_volumes={
     '/var/fipro/data/dionaea': {'bind': '/opt/dionaea/var/dionaea', 'mode': 'rw'}
 }

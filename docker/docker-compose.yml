@@ -12,6 +12,7 @@ services:
     image: "ardikabs/fipro-agent:1.0"
     volumes:
       - /var/run/:/var/run/
+      - /var/fipro/agent/docker/agent/project:/project
   
   fluentbit-service:
     container_name: fluentbit

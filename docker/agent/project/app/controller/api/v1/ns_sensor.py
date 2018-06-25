@@ -20,11 +20,21 @@ class HoneypotCollection(Resource):
                 network_settings, = container.attrs['NetworkSettings']['Networks'].values()
                 data = {
                     'id': container.id,
+                    'short_id': container.short_id,
                     'name': container.name,
                     'status': container.status,
                     'state': container.attrs['State'],
                     'ipaddr': network_settings['IPAddress']
                 }
+
+                if request.args.get('name_container') == container.name:
+                    response = {
+                        'status': True,
+                        'sensor': data,
+                        'timestamps': time.time()
+                    }
+                    return make_response(jsonify(response), 200)
+
                 resp_container.append(data)
 
             response = {
@@ -39,33 +49,37 @@ class HoneypotCollection(Resource):
 
     def post(self):
         data = request.json
-        sensor_name = data["sensor_name"]
         sensor_type = data["sensor_type"]
         sensor_image = data["sensor_image"] or "ardikabs/"+sensor_type+":1.0"
-
-        try:
-            container = client.containers.run(image=sensor_image, 
-                                            name=sensor_name,
-                                            restart_policy={"Name": "always"},
-                                            ports= config.container_attributes[sensor_type]['ports'],
-                                            volumes= config.container_attributes[sensor_type]['volumes'],
-                                            detach=True)
-            network_settings, = container.attrs['NetworkSettings']['Networks'].values()
-
-            response = {
-                'status': True,
-                'id': container.id,
-                'name': sensor_name,
-                'ipaddr': network_settings['IPAddress'],
-                'message': "Sensor "+ sensor_name +" successfully has been added",
-                'timestamps': time.time()
-            }
-
-            return make_response(jsonify(response), 200)
         
-        except docker.errors.APIError:
-            response = {'status': False,'message': "There is a problem in sensor server !"}
-            return make_response(jsonify(response), 500)
+        # try:
+        container = client.containers.run(image=sensor_image, 
+                                        name= sensor_type,
+                                        restart_policy={"Name": "always"},
+                                        ports= config.container_attributes[sensor_type]['ports'],
+                                        volumes= config.container_attributes[sensor_type]['volumes'],
+                                        detach=True)
+        network_settings, = container.attrs['NetworkSettings']['Networks'].values()
+
+        response = {
+            'status': True,
+            'sensor': {
+                'id': container.id, 
+                'short_id': container.short_id,
+                'name': container.name, 
+                'status': container.status,
+                'state': container.attrs['State'],
+                'ipaddr': network_settings['IPAddress']
+            },
+            'message': "Sensor "+ sensor_type +" successfully has been added",
+            'timestamps': time.time()
+        }
+
+        return make_response(jsonify(response), 200)
+    
+        # except docker.errors.APIError:
+        #     response = {'status': False,'message': "There is a problem in sensor server !"}
+        #     return make_response(jsonify(response), 500)
 
 @ns.route('/<string:sensor_id>/')
 class HoneypotItem(Resource):
@@ -78,6 +92,7 @@ class HoneypotItem(Resource):
                 'status': True,
                 'sensor': {
                     'id': container.id, 
+                    'short_id': container.short_id,
                     'name': container.name, 
                     'status': container.status,
                     'state': container.attrs['State'],
@@ -107,6 +122,7 @@ class HoneypotItem(Resource):
                 'status': True,
                 'sensor': {
                     'id': container.id, 
+                    'short_id': container.short_id,
                     'name': container.name, 
                     'status': container.status,
                     'state': container.attrs['State'],
@@ -135,6 +151,7 @@ class HoneypotItem(Resource):
                 'status': True,
                 'sensor': {
                     'id': container.id, 
+                    'short_id': container.short_id,
                     'name': container.name, 
                     'status': container.status,
                     'state': container.attrs['State'],
@@ -159,18 +176,21 @@ class HoneypotOperation(Resource):
             container= client.containers.get(sensor_id)
             if operator == 'start':
                 container.start()
-                message = "Sensor {} have been started".format(container.name)
-            elif operator == 'stop':
-                container.stop()
-                message = "Sensor {} have been stopped".format(container.name)
+                message = "Sensor {} has been started".format(container.name)
             elif operator == 'restart':
                 container.restart()
-                message = "Sensor {} have been restarted".format(container.name)
+                message = "Sensor {} has been restarted".format(container.name)
+            elif operator == 'stop':
+                container.stop()
+                message = "Sensor {} has been stopped".format(container.name)
+            elif operator == 'destroy':
+                container.remove(force=True)
+                message = "Sensor {} has been destroyed".format(container.name)
 
             else:
                 return dict(
                         status=False,
-                        message="Operation unknown. Operation: Start | Stop | Restart"
+                        message="Operation unknown. Operation: Start | Stop | Restart | Destroy"
                     )
 
             container = client.containers.get(sensor_id)
@@ -180,6 +200,7 @@ class HoneypotOperation(Resource):
                 'status': True,
                 'sensor': {
                     'id': container.id, 
+                    'short_id': container.short_id,
                     'name': container.name, 
                     'status': container.status,
                     'state': container.attrs['State'],

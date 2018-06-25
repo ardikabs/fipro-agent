@@ -105,6 +105,12 @@ setup_fluentbit(){
     sed -i 's/@SET identifier=<identifier>/@SET identifier='$IDENTIFIER'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
 }
 
+setup_agent(){
+    touch $DOCKER_DIR/agent/project/.env
+
+    echo "SERVER_IP=$SERVER_IP" >> $DOCKER_DIR/agent/project/.env
+}
+
 create_user(){
     sudo addgroup --gid 3500 fipro
     sudo adduser --system --shell /bin/bash --uid 3500 --disabled-password \
@@ -136,6 +142,7 @@ main(){
     setup_ssh    
     setup_fluentbit
     setup_cronjob
+    setup_agent
     composer
 }
 
