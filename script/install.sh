@@ -100,7 +100,7 @@ setup_cronjob(){
 
 setup_fluentbit(){
     # Set Fluentbit Configuration
-    sed -i 's/@SET fleutnd_ip=<fleutnd_ip>/@SET fleutnd_ip='$SERVER_IP'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
+    sed -i 's/@SET fluentd_ip=<fluentd_ip>/@SET fluentd_ip='$SERVER_IP'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
     sed -i 's/@SET agent_ip=<agent_ip>/@SET agent_ip='$AGENT_IP'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
     sed -i 's/@SET identifier=<identifier>/@SET identifier='$IDENTIFIER'/g' $DOCKER_DIR/fluentbit/conf/fluent-bit.conf
 }
