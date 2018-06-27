@@ -50,7 +50,7 @@ class HoneypotCollection(Resource):
     def post(self):
         data = request.json
         sensor_type = data["sensor_type"]
-        sensor_image = data["sensor_image"] or "ardikabs/"+sensor_type+":1.0"
+        sensor_image = data["sensor_image"] or "ardikabs/"+sensor_type
         
         # try:
         container = client.containers.run(image=sensor_image, 
@@ -174,6 +174,7 @@ class HoneypotOperation(Resource):
     def get(self, sensor_id, operator):
         try:
             container= client.containers.get(sensor_id)
+            network_settings, = container.attrs['NetworkSettings']['Networks'].values()
             if operator == 'start':
                 container.start()
                 message = "Sensor {} has been started".format(container.name)
@@ -186,6 +187,21 @@ class HoneypotOperation(Resource):
             elif operator == 'destroy':
                 container.remove(force=True)
                 message = "Sensor {} has been destroyed".format(container.name)
+                response = {
+                    'status': True,
+                    'sensor': {
+                        'id': container.id, 
+                        'short_id': container.short_id,
+                        'name': container.name, 
+                        'status': "dead",
+                        'state': None,
+                        'ipaddr': network_settings['IPAddress']
+                    },
+                    "message": message,
+                    'timestamps': time.time()
+                }
+                return make_response(jsonify(response), 404)
+
 
             else:
                 return dict(
