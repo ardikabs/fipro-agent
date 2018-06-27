@@ -7,7 +7,7 @@ fi
 
 if [[ $# -ne 3 ]]; then
 	echo "Wrong number of arguments supplied"
-	echo "Usage: $0 <server_url> <api_key> <deploy_key>"
+	echo "Usage: $0 <server_ip> <agent_ip> <identifier>"
 	exit 1
 fi
 
@@ -17,27 +17,9 @@ export BASE_DIR=`dirname "$(readlink -f $AGENT_DIR)"`
 export DOCKER_DIR=$AGENT_DIR/docker
 export DATA_DIR=$BASE_DIR/data
 
-SERVER_URL=$1
-API_KEY=$2
-DEPLOY_KEY=$3
-
-curl -s -X POST -H "Content-Type: application/json" -d "{
-	\"deploy_key\": \"$DEPLOY_KEY\",
-    \"api_key\": \"$API_KEY\"
-}" $SERVER_URL/api/v1/agent/ > /tmp/agent.json
-
-STATUS=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["status"])')
-if [[ "$STATUS" != True ]]; then
-    clear
-    echo -e "\n\n>>> Deploy Key are expired. Please Renew Again. <<<"
-    echo -e "##### Installer Stopped #####\n\n\n"
-    sudo rm -rf /var/fipro/
-    exit 1
-fi
-
-SERVER_IP=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["server_ip"])')
-AGENT_IP=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["agent_ip"])')
-IDENTIFIER=$(cat /tmp/agent.json | python3 -c 'import sys,json;obj=json.load(sys.stdin);print (obj["identifier"])')
+SERVER_IP=$1
+AGENT_IP=$2
+IDENTIFIER=$3
 
 install_docker(){
     echo -e "\n\n>>>> Docker Engine Installation >>>>"

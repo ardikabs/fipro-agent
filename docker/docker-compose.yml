@@ -8,7 +8,7 @@ services:
     container_name: fipro-agent
     restart: always
     ports:
-     - "8080:5000"
+     - "5000:5000"
     image: "ardikabs/fipro-agent"
     volumes:
       - /var/run/:/var/run/
