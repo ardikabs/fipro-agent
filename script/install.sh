@@ -107,8 +107,9 @@ setup_fluentbit(){
 
 setup_agent(){
     touch $DOCKER_DIR/agent/project/.env
-
+    SECRET=$(python3 -c 'import os;import binascii;print(binascii.hexlify(os.urandom(24)))')
     echo "SERVER_IP=$SERVER_IP" >> $DOCKER_DIR/agent/project/.env
+    echo "SECRET_KEY=$SECRET" >> $DOCKER/agent/project/.env
 }
 
 create_user(){
