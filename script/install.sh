@@ -114,7 +114,7 @@ composer(){
 
     sleep 3
     clear
-    echo "\n\n>>> Agent Installation Done <<<"
+    echo -e "\n\n>>> Agent Installation Done <<<"
 }
 
 
