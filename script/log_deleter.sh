@@ -22,7 +22,7 @@ main(){
     cowrie_deleter
     dionaea_deleter
     glastopf_deleter
-    sudo -u fipro docker restart $(docker ps -q)
+    #sudo -u fipro docker restart $(docker ps -q)
 }
 
 main

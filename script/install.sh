@@ -77,7 +77,11 @@ setup_ssh(){
 
 setup_cronjob(){
     # Inserting Cronjob for Deleting Schedule
-    sudo crontab -u fipro -l | { cat; echo "0 0 * * * bash /var/fipro/agent/script/log_deleter.sh"; } | crontab -u fipro -
+    # Every 00:00
+    # sudo crontab -u fipro -l | { cat; echo "0 0 * * * bash /var/fipro/agent/script/log_deleter.sh"; } | crontab -u fipro -
+
+    # Every 12:00
+    sudo crontab -u fipro -l | { cat; echo "0 12 * * * bash /var/fipro/agent/script/log_deleter.sh"; } | crontab -u fipro -
 }
 
 setup_fluentbit(){
