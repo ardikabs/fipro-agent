@@ -81,7 +81,13 @@ setup_cronjob(){
     # sudo crontab -u fipro -l | { cat; echo "0 0 * * * bash /var/fipro/agent/script/log_deleter.sh"; } | crontab -u fipro -
 
     # Every 12:00
-    sudo crontab -u fipro -l | { cat; echo "0 12 * * * bash /var/fipro/agent/script/log_deleter.sh"; } | crontab -u fipro -
+    # sudo crontab -u fipro -l | { cat; echo "0 12 * * * bash /var/fipro/agent/script/log_deleter.sh"; } | crontab -u fipro -
+
+    # Every 12 hour
+    sudo crontab -u fipro -l | { cat; echo "* */12 * * * bash /var/fipro/agent/script/log_deleter.sh"; } | crontab -u fipro -
+
+    # Every 6 hour
+    # sudo crontab -u fipro -l | { cat; echo "* */6 * * * bash /var/fipro/agent/script/log_deleter.sh"; } | crontab -u fipro -
 }
 
 setup_fluentbit(){

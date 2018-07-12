@@ -1,19 +1,25 @@
 
-
+DATA_DIR=/var/fipro/data
 
 cowrie_deleter(){
-    rm -rf /var/fipro/data/cowrie/log/cowrie.json.*
+    rm -rf $DATA_DIR/cowrie/log/cowrie.json.*
+    #cat $DATA_DIR/cowrie/log/cowrie.json >> $DATA_DIR/cowrie/log/cowrie.bak
 }
 
 glastopf_deleter(){
-    truncate -s 0 /var/fipro/data/glastopf/log/glastopf.log
+    rm -rf $DATA_DIR/glastopf/log/glastopf.log.*
+    truncate -s 0 $DATA_DIR/glastopf/log/glastopf.log
+    #cat $DATA_DIR/glastopf/log/glastopf.log >> $DATA_DIR/glastopf/log/glastopf.log.bak
+
 }
 
 dionaea_deleter(){
-    truncate -s 0 /var/fipro/data/dionaea/dionaea-errors.log
-    truncate -s 0 /var/fipro/data/dionaea/dionaea.json
-    rm -rf /var/fipro/data/dionaea/binaries/*
-    rm -rf /var/fipro/data/dionaea/bistreams/*
+    truncate -s 0 $DATA_DIR/dionaea/dionaea-errors.log
+    truncate -s 0 $DATA_DIR/dionaea/dionaea.json
+    #cat $DATA_DIR/dionaea/dionaea.json >> $DATA_DIR/dionaea/dionaea.json.bak
+ 
+    rm -rf $DATA_DIR/dionaea/binaries/*
+    rm -rf $DATA_DIR/dionaea/bistreams/*
 
 }
 
