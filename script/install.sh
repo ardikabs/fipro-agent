@@ -69,6 +69,7 @@ setup_dir(){
 setup_ssh(){
     echo -e "\n\n>>>> Change SSH Port 22 to 2222 >>>>"
     sudo apt-get install openssh-server
+    sed -i 's#/Port 22/Port 2222/g' /etc/ssh/sshd_config
     sed -i 's/Port 22/Port 2222/g' /etc/ssh/sshd_config
     sudo /etc/init.d/ssh restart
 
